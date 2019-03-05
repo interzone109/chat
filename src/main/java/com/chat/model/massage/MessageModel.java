@@ -17,6 +17,7 @@ public class MessageModel {
 	private String sender ;
 	
 	// massage text
-	private String massage ;
+	private String text ;
 	
+	private long conversationId;
 }

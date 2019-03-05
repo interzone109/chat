@@ -1,6 +1,7 @@
 package com.chat.service.conversation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,11 @@ public class ConversationServiceImpl implements ConversationService {
 	public List<ConversationEntity> findAllByContacts_Name(String name) {
 		return cRepository.findAllByContacts_Name(name);
 	}
-	
+	 
+	 
+	public Optional<ConversationEntity> findById(Long id) {
+		return cRepository.findById(id);
+	}
 	
 }
 

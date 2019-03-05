@@ -1,5 +1,4 @@
 
-
 var requestGET = new XMLHttpRequest();
 
 requestGET.open('GET', 'http://localhost:8080/conversation', true);
@@ -9,17 +8,13 @@ requestGET.onload = function () {
     	 console.log(dataJSON.responseText);
     	 console.log('reload');
         dataJSON.forEach(conversation =>{
-        	buildConversationList(conversation);
+        buildConversationList(conversation);
         });
       }else {
-        console.log('error load chats'+dataJSON);
+        console.log('error load conversation');
       }
     } 
   requestGET.send();
-
-
-
-
 
 
 var searchInput = document.getElementById('search_input');
@@ -59,7 +54,7 @@ function searchNewConversation() {
 	requestPOST.send(data);
 	}
 };
-
+//
 function showSearchResult(data){
 	var searchList = document.getElementById('search_list');
 	searchList.innerHTML='';
@@ -79,10 +74,12 @@ function showSearchResult(data){
 		searchList.appendChild(contactList);
 		
 		var startConversationBtn = document.getElementById('create_conversation_'+contact.id);
-		startConversationBtn.addEventListener("focus", addNewConversation);
+		startConversationBtn.addEventListener("click", addNewConversation); 
+		
 	});
 };
 
+//поиск по достувпным контактам в базе
 function addNewConversation(){
 	var contactId = this.previousSibling.innerText;
 	
@@ -93,7 +90,7 @@ function addNewConversation(){
 	requestPOST.onreadystatechange = function () {
 	    if ( requestPOST.readyState === 4 && requestPOST.status === 200) {
 	    	var dataJSON = JSON.parse(requestPOST.responseText);
-	        console.log( this.responseText);
+	       // console.log( this.responseText);
 	        buildConversationList(dataJSON);
 	    }else {
 	      console.log('error send data on /conversation');
@@ -113,33 +110,107 @@ function addNewConversation(){
 	requestPOST.send(data);
 	};
 
+	// добавляет новую  'conversation' 
 function buildConversationList(conversation){
 	var contactItem = document.createElement('div');
 	contactItem.className="chat_list";
 	contactItem.addEventListener("click", contactOnFocus);
-	contactItem.innerHTML ="<div hidden id=\"conversation_id\">"+conversation.id+"</div>"
+	contactItem.innerHTML ="<div hidden id=\"conversation_"+conversation.id+"\">"+conversation.id+"</div>"
 						  +"<div class=\"chat_people\">"
 						  +"<div class=\"chat_img\">"
-						  +"<img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\">"
-						  +"</div>"
+						  +"<img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\"> </div>"
 						  +"<div class=\"chat_ib\">"
-						  +"<h5 >"+conversation.conversationName+"</h5>"
-						  +"</div>  ";
+						  +"<h5>"+conversation.conversationName+"</h5>"
+						  +"</div> ";
 	
 	var contactList = document.getElementById('contacts_list');
 	contactList.prepend(contactItem);
+	
+	var chatItem = document.createElement('div');
+	chatItem.className="msg_history";
+	
+	
+	subscriptionToTheConversation(conversation.id);
 };
 
+	//выделяет выбранный контакт
 function contactOnFocus(){
 	var iter = document.getElementsByClassName("chat_list active_chat").length;
-	console.log(iter);
 	if(iter > 0){
 		iter--;
-		var elem = document.getElementsByClassName("chat_list"+" active_chat")[i];
-		elem.className =  "chat_list";
+		var elem = document.getElementsByClassName("chat_list"+" active_chat")[iter];
+		elem.className = "chat_list";
 	}
 	if(this.className ==="chat_list" ){
 	this.className += " active_chat";
-	} 
 
+	loadLastMessage();
+	
+	} 
+};
+
+	/**********************************************************************************************/
+	/*  Stomp js       */
+
+
+document.getElementById('message_send_button').addEventListener("click", function(){
+	
+	 var iter = document.getElementsByClassName("chat_list active_chat").length;
+	 if(iter === 1){
+		var conversationId = document.getElementsByClassName("chat_list active_chat")[0].firstChild.innerText;
+		sendMessage(conversationId);
+	 }
+});
+
+var stompClient = null;
+
+function subscriptionToTheConversation( conversationId) {
+	var socket = new SockJS('/message/'+conversationId);
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+        console.log('Connected:client to  /topic/response/'+conversationId +"; status "+ frame);
+        
+        stompClient.subscribe('/topic/response/'+conversationId, function(message){
+        var responce = JSON.parse(message.body);
+        showMessage(JSON.parse(message.body)) ;
+        
+        });  
+        
+    });
+};
+
+function showMessage(data){
+	var conversation = document.getElementById('conversation_'+data.conversationId);
+	if(conversation.parentNode.className ==="chat_list active_chat" ){
+		createMessages(data);
+	}
+	console.log(conversation.parentNode);
 }
+
+function createMessages(data){
+	
+}
+
+function sendMessage(conversationId) {
+    var sender = document.getElementById('userNameLable').textContent;
+    var text = document.getElementById('sendTextInput').value;
+    var data = JSON.stringify({
+    	'sender': sender ,
+    	'text' : text ,
+    	'conversationId' : conversationId
+    }) ;
+    
+    document.getElementById('sendTextInput').value='';
+    stompClient.send('/app/message/'+conversationId, {}, data);
+   
+};
+
+function loadLastMessage() {
+	console.log('LOAD LAST MESSAGES');
+}
+
+
+
+
+
+

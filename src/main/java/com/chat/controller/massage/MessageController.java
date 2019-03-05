@@ -1,31 +1,48 @@
 package com.chat.controller.massage;
 
-import org.springframework.http.HttpEntity;
+import java.util.GregorianCalendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 
+import com.chat.entity.conversation.ConversationEntity;
+import com.chat.entity.message.MessageEntity;
 import com.chat.model.massage.MessageModel;
+import com.chat.service.conversation.ConversationServiceImpl;
 
-@RestController
-@RequestMapping("/messages")
+@Controller
 public class MessageController {
-
 	
-	@PostMapping
-    @MessageMapping("/newMessage")
-    @SendTo("/topic/newMessage")
-    public MessageModel saveMessage(MessageModel messageModel) {
-		return null;
+	@Autowired
+	private ConversationServiceImpl conversationServiceImpl;
+	
+	
+	@MessageMapping("/message/{chatId}")
+	@SendTo("/topic/response/{chatId}")
+	public MessageModel mailing(MessageModel message) throws Exception {
+		
+		System.err.println("/topic/mailing "+message.getConversationId());
+		ConversationEntity con = conversationServiceImpl.findById(message.getConversationId()).get();
+		
+		MessageEntity messageEntity = new MessageEntity();
+		messageEntity.setDate(new GregorianCalendar());
+		messageEntity.setSender(message.getSender());
+		messageEntity.setText(message.getText());
+		messageEntity.setConversation(con);
+		
+		con.getMessages().add(messageEntity);
+		conversationServiceImpl.save(con);
+		
+		
+		return MessageModel.builder()
+				.id(messageEntity.getId())
+				.date(messageEntity.getDate())
+				.sender(messageEntity.getSender())
+				.text(messageEntity.getText())
+				.conversationId(messageEntity.getConversation().getId())
+				.build();
 	}
 	
-	@GetMapping
-	@RequestMapping(value = "/messages", method = RequestMethod.GET)
-	public HttpEntity<MessageModel> list() {
-		return null;
-	}
 }

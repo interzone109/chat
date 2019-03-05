@@ -2,23 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet"/>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+	type="text/css" rel="stylesheet" />
+<link
+	href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+	rel="stylesheet" id="bootstrap-css">
+<script
+	src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link rel="stylesheet" th:href="@{/css/style.css}" />
 
- <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.0/jquery.timeago.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
- 
-   
+<script src="//code.jquery.com/jquery-1.11.1.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.0/jquery.timeago.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<!-- https://cdnjs.com/libraries/sockjs-client -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<!-- https://cdnjs.com/libraries/stomp.js/ -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
 </head>
 
 <body>
-<!-- main container -->
+	<!-- main container -->
 	<div class="container">
 		<h3 class=" text-center">Chat</h3>
 		<div class="messaging">
@@ -26,62 +42,59 @@
 				<div class="inbox_people">
 					<div class="headind_srch">
 						<div class="recent_heading">
-							<h4 th:text="${userName}"></h4>
+							<h4 th:text="${userModel}" id="userNameLable"></h4>
 						</div>
-						
+
 						<!-- Search bar -->
 						<div class="srch_bar">
 							<div class="stylish-input-group">
-								<input type="text" class="search-bar" placeholder="Search" id="search_input">
-								<span class="input-group-addon">
-									<button type="button" id="search_button">
-									</button>
+								<input type="text" class="search-bar" placeholder="Search"
+									id="search_input"> <span class="input-group-addon">
+									<button type="button" id="search_button"></button>
 								</span>
 							</div>
 						</div>
 						<!-- Search bar -->
-						
+
 					</div>
+
 					<!-- search list -->
-					 <div class="inbox_chat" id="search_list" hidden>
-					
-					</div> 
+					<div class="inbox_chat" id="search_list" hidden></div>
 					<!-- search list -->
+
 					<!-- Contacts -->
-					 <div class="inbox_chat" id="contacts_list">
-		
-					</div> 
+					<div class="inbox_chat" id="contacts_list"></div>
 					<!-- Contacts -->
-			
+
 				</div>
-				
+
 				<!-- chat  body -->
 				<div class="mesgs">
-				<!-- chat  history -->
-					<div class="msg_history">
-					
-					<!-- incoming massege -->
+					<!-- chat  history -->
+					<div class="msg_history" >
+
+						<!-- incoming massege -->
 						<div class="incoming_msg">
 							<div class="incoming_msg_img">
 								<img src="https://ptetutorials.com/images/user-profile.png"
 									alt="sunil">
 							</div>
-							 <div class="received_msg">
+							<div class="received_msg">
 								<div class="received_withd_msg">
 									<p>massege from contact</p>
 									<span class="time_date"> date</span>
 								</div>
-							</div> 
+							</div>
 						</div>
 						<!-- incoming massege -->
-						
+
 						<div class="outgoing_msg">
 							<div class="sent_msg">
 								<p>outgoing massege</p>
 								<span class="time_date"> 11:01 AM | June 9</span>
 							</div>
 						</div>
-						
+
 						<div class="incoming_msg">
 							<div class="incoming_msg_img">
 								<img src="https://ptetutorials.com/images/user-profile.png"
@@ -114,14 +127,17 @@
 								</div>
 							</div>
 						</div>
+						
 					</div>
 					<!-- chat  history -->
-					
+
 					<!--  send field -->
 					<div class="type_msg">
 						<div class="input_msg_write">
-							<input type="text" class="write_msg" placeholder="Type a message" />
-							<button class="msg_send_btn" type="button">
+							<input type="text" class="write_msg" placeholder="Type a message"
+								id="sendTextInput" />
+							<button class="msg_send_btn" type="button"
+								id="message_send_button">
 								<i class="fa fa-paper-plane-o" aria-hidden="true"></i>
 							</button>
 						</div>
@@ -129,15 +145,15 @@
 					<!--  send field -->
 				</div>
 				<!-- chat  body -->
-				
+
 			</div>
 		</div>
 	</div>
 	<!-- main container -->
-	
+
 	<!-- script -->
-            <script th:src="@{/js/conversation.js}"></script>
-             <script th:src="@{/js/message.js}"></script>
-    <!-- script -->
+	<script th:src="@{/js/conversation.js}"></script>
+
+	<!-- script -->
 </body>
 </html>

@@ -1,61 +1,45 @@
    var stompClient = null;
- 
+
+     /*   function setConnected(connected) {
+            document.getElementById('connect').disabled = connected;
+            console.log('here conect to app');
+            document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+            document.getElementById('response').innerHTML = '';
+        }*/
+
         function connect() {
-            var socket = new SockJS('/newMessage');
+            var socket = new SockJS('/connect');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function(frame) {
-                stompClient.subscribe('/topic/newMessage', function(message){
-                    refreshMessages(JSON.parse(JSON.parse(message.body).content));
+               // setConnected(true);
+                console.log('Connected:client ' + frame);
+                stompClient.subscribe('/topic/connected', function(greeting){
+                //    showGreeting(JSON.parse(greeting.body).content);
+                	 console.log('create message');
                 });
+                
             });
         }
- 
+
+       
+
+  /*      function sendName() {
+            var name = document.getElementById('userNameInput').value;
+            stompClient.send("/app/connected", {}, JSON.stringify({ 'sender': name }));
+        }
+
+        function showGreeting(message) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(message));
+            response.appendChild(p);
+        }
+        
+        
         function disconnect() {
-            if (stompClient != null) {
-                stompClient.disconnect();
-            }
-        }
- 
-        function refreshMessages(messages) {
-            $(".media-list").html("");
-            $.each(messages.reverse(), function(i, message) {
-                $(".media-list").append('<li class="media"><div class="media-body"><div class="media"><div class="media-body">'
-                + message.text + '<br/><small class="text-muted">' + message.author + ' | ' + new Date(message.createDate) + '</small><hr/></div></div></div></li>');
-            });
-        }
- 
-       /* $(function(){
- 
-            if (typeof $.cookie("realtime-chat-nickname") === 'undefined') {
-                window.location = "/login"
-            } else {
-                connect();
-                $.get("/messages", function (messages) {
-                    refreshMessages(messages)
-                });
- 
-                $("#sendMessage").on("click", function() {
-                    sendMessage()
-                });
- 
-                $('#messageText').keyup(function(e){
-                    if(e.keyCode == 13)
-                    {
-                        sendMessage();
-                    }
-                });
-            }*/
- 
-            function sendMessage() {
-                $container = $('.media-list');
-                $container[0].scrollTop = $container[0].scrollHeight;
-                var message = $("#messageText").val();
-                var author = $.cookie("realtime-chat-nickname");
- 
-                stompClient.send("/app/newMessage", {}, JSON.stringify({ 'text': message, 'author': author}));
- 
-                $("#messageText").val("")
-                $container.animate({ scrollTop: $container[0].scrollHeight }, "slow");
- 
-            }
-        })
+            stompClient.disconnect();
+            setConnected(false);
+            console.log("Disconnected");
+        }*/

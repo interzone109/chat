@@ -42,8 +42,8 @@ public class MessageEntity {
 	private String sender ;
 	
 	// massage text
-	@Column(name = "message", nullable = true)
-	private String message ;
+	@Column(name = "text", nullable = true)
+	private String text ;
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "conversation_id", nullable = false)

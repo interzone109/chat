@@ -43,7 +43,7 @@ public class ConversationEntity {
 	inverseJoinColumns = @JoinColumn(name="user_id" ))
 	private List<UserEntity> contacts ;
 	
-	@OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY 
+	@OneToMany(mappedBy = "conversation", fetch = FetchType.EAGER 
 			, cascade = CascadeType.ALL)
-	private List<MessageEntity> massages ;
+	private List<MessageEntity> messages ;
 }
