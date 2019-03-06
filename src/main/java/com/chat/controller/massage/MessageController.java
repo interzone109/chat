@@ -12,18 +12,20 @@ import com.chat.entity.message.MessageEntity;
 import com.chat.model.massage.MessageModel;
 import com.chat.service.conversation.ConversationServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class MessageController {
 	
 	@Autowired
 	private ConversationServiceImpl conversationServiceImpl;
 	
-	
 	@MessageMapping("/message/{chatId}")
 	@SendTo("/topic/response/{chatId}")
-	public MessageModel mailing(MessageModel message) throws Exception {
+	public MessageModel mailing(MessageModel message)  {
 		
-		System.err.println("/topic/mailing "+message.getConversationId());
+		log.info("/topic/mailing "+message.getConversationId());
 		ConversationEntity con = conversationServiceImpl.findById(message.getConversationId()).get();
 		
 		MessageEntity messageEntity = new MessageEntity();
@@ -44,5 +46,6 @@ public class MessageController {
 				.conversationId(messageEntity.getConversation().getId())
 				.build();
 	}
+
 	
 }

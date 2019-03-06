@@ -18,7 +18,10 @@ import com.chat.entity.user.UserEntity;
 import com.chat.service.conversation.ConversationServiceImpl;
 import com.chat.service.user.UserServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class LoginController {
 
 	@Autowired
@@ -29,15 +32,17 @@ public class LoginController {
 	
 	@RequestMapping(path = "/chat", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Model model) {
-
+		
 		String username = (String) request.getSession().getAttribute("username");
 		if (username == null || username.isEmpty()) {
+			
 			return "redirect:/login";
 		}
 		
 		Optional<UserEntity> userOptional = userServiceImpl.findOneByName(username);
 		
 		if (!userOptional.isPresent()){
+			log.info("registrate new user "+username);
 			UserEntity userSystem = userServiceImpl.findOneByName("system").get();
 			UserEntity user = new UserEntity();
 			user.setName(username);
